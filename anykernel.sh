@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=LightningKernel by Prorooter007 @ xda-developers
+kernel.string=Perf+ Kernel By Murtaza Piplod  TG:@mtpiplod  XDA:Murtaza 1326
 do.devicecheck=1
 do.modules=0
 do.systemless=1
