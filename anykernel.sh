@@ -11,7 +11,7 @@ do.systemless=1
 do.cleanup=1
 do.cleanuponabort=1
 device.name1=tissot
-supported.versions=9, 9.0, 10, 10.0
+supported.versions=9, 9.0, 10, 10.0, 11, 11.0
 supported.patchlevels=2019-06 -
 '; } # end properties
 
@@ -28,12 +28,12 @@ ramdisk_compression=auto;
 
 ## AnyKernel file attributes
 # set permissions/ownership for included ramdisk files
-chmod -R 750 $ramdisk/*;
-chmod -R 755 $overlay/init.lightning.rc;
-chown -R root:root $ramdisk/*;
+set_perm_recursive 0 0 755 644 $ramdisk/*;
+set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
+# set as executable
+set_perm 0 0 750 $ramdisk/overlay/init.lightning.rc;
 
-
-## AnyKernel install
+## AnyKernel boot install
 dump_boot;
 
 # begin ramdisk changes
@@ -54,10 +54,6 @@ if [ -f $compressed_image ]; then
     $bin/magiskboot --hexpatch $decompressed_image 736B69705F696E697472616D667300 77616E745F696E697472616D667300;
     $bin/magiskboot --compress=gzip $decompressed_image $compressed_image;
 
-   # Add our ramdisk files
-    mv $overlay $ramdisk;
-    cp /system_root/init.rc $ramdisk/overlay;
-    insert_line $ramdisk/overlay/init.rc "init.lightning.rc" after 'import /init.usb.rc' "import /init.lightning.rc";
  fi;
 
   ui_print "Checking for Project Treble...";
@@ -76,5 +72,21 @@ fi;
 # end ramdisk changes
 
 write_boot;
-## end install
+## end boot install
+
+
+# shell variables
+#block=vendor_boot;
+#is_slot_device=1;
+#ramdisk_compression=auto;
+
+# reset for vendor_boot patching
+#reset_ak;
+
+
+## AnyKernel vendor_boot install
+#split_boot; # skip unpack/repack ramdisk since we don't need vendor_ramdisk access
+
+#flash_boot;
+## end vendor_boot install
 
